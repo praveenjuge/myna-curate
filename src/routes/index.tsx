@@ -2,10 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { readDir, FileEntry } from "@tauri-apps/api/fs";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { Masonry, Image as PinterestImage } from "gestalt";
-
-import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
-import { getStore } from "./lib/store";
+import { getStore } from "../lib/store";
+import Header from "@/components/Header";
 
 type ImageFile = {
   src: string;
@@ -14,7 +12,7 @@ type ImageFile = {
   naturalHeight: number;
 };
 
-const App = () => {
+export default function Index() {
   const [files, setFiles] = useState<ImageFile[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -74,37 +72,31 @@ const App = () => {
     <PinterestImage
       src={data.src}
       alt={data.name}
-      color="#EFEFEF"
       naturalWidth={data.naturalWidth}
       naturalHeight={data.naturalHeight}
     />
   );
 
   return (
-    <section className="flex max-h-screen">
-      <Sidebar />
-      <main className="flex-1 shadow-sm flex flex-col">
-        <Header />
-        <div
-          ref={scrollContainerRef}
-          className="overflow-y-auto overflow-x-hidden w-full h-full min-w-full max-w-full min-h-full max-h-full [&_img]:rounded-lg [&_img]:border [&_img]:border-slate-200 pt-4 pb-24"
-        >
-          {scrollContainerRef.current && (
-            <Masonry
-              virtualize
-              minCols={1}
-              items={files}
-              gutterWidth={16}
-              key={windowWidth}
-              virtualBufferFactor={3}
-              renderItem={renderItem}
-              scrollContainer={() => scrollContainerRef.current as HTMLElement}
-            />
-          )}
-        </div>
-      </main>
-    </section>
+    <>
+      <Header title="Everything" />
+      <div
+        ref={scrollContainerRef}
+        className="overflow-y-auto overflow-x-hidden w-full h-full min-w-full max-w-full min-h-full max-h-full [&_img]:rounded-lg [&_img]:ring-[0.5px] [&_img]:ring-slate-300/75 pt-4 pb-24"
+      >
+        {scrollContainerRef.current && (
+          <Masonry
+            virtualize
+            minCols={1}
+            items={files}
+            gutterWidth={16}
+            key={windowWidth}
+            virtualBufferFactor={3}
+            renderItem={renderItem}
+            scrollContainer={() => scrollContainerRef.current as HTMLElement}
+          />
+        )}
+      </div>
+    </>
   );
-};
-
-export default App;
+}

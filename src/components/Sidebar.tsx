@@ -1,56 +1,125 @@
-import { useState, useEffect } from "react";
-import { open } from "@tauri-apps/api/dialog";
-import { getStore, saveStore } from "../lib/store";
-import { Plus } from "@mynaui/icons-react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Cog, Heart, Home, Inbox, Trash } from "@mynaui/icons-react";
+import NavigationButtons from "./NavigationButtons";
+import { cn } from "@/lib/utils";
+import { FileEntry, createDir, readDir } from "@tauri-apps/api/fs";
+import { getStore } from "@/lib/store";
+import { NavigationLink } from "./sidebar/NavigationLink";
+import { AddFolderDialog } from "./sidebar/AddFolderDialog";
+import { FolderList } from "./sidebar/FolderList";
+import { AddNewFiles } from "./AddNewFiles";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const linkClass =
+  "flex items-center gap-1.5 py-1.5 hover:text-orange-600 group truncate";
+const linkActiveClass = cn(
+  linkClass,
+  "text-orange-600 font-medium [&_svg]:text-orange-600"
+);
+const linkInActiveClass = cn(linkClass, "text-slate-600");
+const emojiContainerClass =
+  "bg-white h-5 w-5 flex justify-center items-center rounded ring-[0.5px] ring-slate-300 text-[9px] shrink-0";
+
+interface SidebarState {
+  open: boolean;
+  folderName: string;
+}
 
 export default function Sidebar() {
-  const [files, setFiles] = useState<string | string[]>(""); // State for files, typed as string
+  const navigate = useNavigate();
+  const [state, setState] = useState<SidebarState>({
+    open: false,
+    folderName: "",
+  });
+  const [directories, setDirectories] = useState<FileEntry[]>([]);
+
+  const fetchDirectories = useCallback(async () => {
+    try {
+      const libraryLocation = await getStore("libraryLocation");
+      const dirEntries = await readDir(libraryLocation);
+      const dirs = dirEntries.filter((entry) => entry.children !== undefined);
+      setDirectories(dirs);
+    } catch (error) {
+      console.error("Error reading directories:", error);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchStoredLocation() {
-      const storedLocation = await getStore("libraryLocation");
-      if (storedLocation) {
-        setFiles(storedLocation);
+    fetchDirectories();
+  }, [fetchDirectories]);
+
+  const handleCreateFolder = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const { folderName } = state;
+      if (!folderName) return;
+
+      try {
+        const libraryLocation = await getStore("libraryLocation");
+        const newFolderPath = `${libraryLocation}/${folderName}`;
+        await createDir(newFolderPath, { recursive: true });
+        setState({ open: false, folderName: "" });
+        await fetchDirectories();
+        navigate(`/folder/${encodeURIComponent(folderName)}`);
+      } catch (error) {
+        console.error("Error creating directory:", error);
       }
-    }
+    },
+    [state, fetchDirectories, navigate]
+  );
 
-    fetchStoredLocation();
-  }, []); // Empty dependency array to run only once on mount
+  const handleOpenChange = useCallback((open: boolean) => {
+    setState((prevState) => ({ ...prevState, open }));
+  }, []);
 
-  const selectFolder = async () => {
-    const path = await open({
-      directory: true,
-      multiple: false,
-    });
-
-    if (path) {
-      saveStore("libraryLocation", path);
-      setFiles(path); // Update state when new path is selected
-    }
-  };
+  const handleFolderNameChange = useCallback((folderName: string) => {
+    setState((prevState) => ({ ...prevState, folderName }));
+  }, []);
 
   return (
-    <aside className="w-64 pb-6 bg-slate-100 min-h-screen max-h-screen flex flex-col gap-6 border-r-[0.5px] border-slate-300 justify-between">
-      <div className="flex flex-col gap-6">
-        <div
-          data-tauri-drag-region
-          className="h-12 border-b-[0.5px] border-slate-300"
-        ></div>
-        <button className="flex justify-center items-center gap-2 border">
-          <Plus className="h-4 w-4" />
-          <span>Add New</span>
-        </button>
-        <nav className="flex flex-col gap-3 px-6">
-          <a href="/">Everything</a>
-          <a href="/">Unorganized</a>
-          <a href="/">Favorites</a>
-          <a href="/">Settings</a>
-          <a href="/">Trash</a>
-        </nav>
+    <>
+      <div
+        data-tauri-drag-region
+        className="h-10 shrink-0 border-b-[0.5px] border-slate-300 flex items-center justify-end px-2"
+      >
+        <NavigationButtons />
       </div>
-      <button onClick={selectFolder} className="text-xs border">
-        Location: {files ? <p>{files}</p> : "Select Location"}
-      </button>
-    </aside>
+      <div className="px-4 w-full">
+        <AddNewFiles />
+      </div>
+      <ScrollArea>
+        <nav className="flex flex-col px-4 overflow-y-auto shrink-0">
+          <NavigationLink icon={<Home />} to="/" label="Everything" />
+          <NavigationLink
+            icon={<Inbox />}
+            to="/unorganized"
+            label="Unorganized"
+          />
+          <NavigationLink icon={<Heart />} to="/favorites" label="Favorites" />
+          <NavigationLink icon={<Trash />} to="/trash" label="Trash" />
+          <NavigationLink icon={<Cog />} to="/settings" label="Settings" />
+
+          <p className="uppercase text-[11px] font-semibold tracking-wide text-slate-500 pt-4 pb-1">
+            Folders
+          </p>
+
+          <AddFolderDialog
+            open={state.open}
+            setOpen={handleOpenChange}
+            handleCreateFolder={handleCreateFolder}
+            folderName={state.folderName}
+            setFolderName={handleFolderNameChange}
+            emojiContainerClass={emojiContainerClass}
+          />
+          <FolderList
+            directories={directories}
+            linkActiveClass={linkActiveClass}
+            linkInActiveClass={linkInActiveClass}
+            emojiContainerClass={emojiContainerClass}
+          />
+        </nav>
+      </ScrollArea>
+    </>
   );
 }

@@ -1,7 +1,7 @@
+import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   // prevent vite from obscuring rust errors
   clearScreen: false,
@@ -28,4 +28,9 @@ export default defineConfig({
     sourcemap: !!process.env.TAURI_DEBUG,
   },
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });
