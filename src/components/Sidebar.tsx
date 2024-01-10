@@ -19,7 +19,7 @@ const linkActiveClass = cn(
 const linkInActiveClass = cn(linkClass, 'text-slate-600');
 
 const emojiContainerClass =
-  'bg-white h-5 w-5 flex justify-center items-center rounded border-[0.5px] border-slate-300 text-[9px] text-slate-400 group-hover:bg-orange-50 group-hover:border-orange-200 group-hover:text-orange-600';
+  'bg-white h-5 w-5 flex justify-center items-center rounded border-[0.5px] border-slate-300 text-[9px] text-slate-400 group-hover:bg-orange-50 group-hover:border-orange-200 group-hover:text-orange-600 shrink-0';
 
 interface SidebarState {
   open: boolean;
@@ -38,7 +38,14 @@ export default function Sidebar() {
     try {
       const libraryLocation = await getStore('libraryLocation');
       const dirEntries = await readDir(libraryLocation);
-      const dirs = dirEntries.filter((entry) => entry.children !== undefined);
+      const dirs = dirEntries.filter((entry) => {
+        // Exclude 'unorganized' and 'trash' folders
+        return (
+          entry.children !== undefined &&
+          entry.name !== 'Unorganized' &&
+          entry.name !== 'Trash'
+        );
+      });
       setDirectories(dirs);
     } catch (error) {
       console.error('Error reading directories:', error);
