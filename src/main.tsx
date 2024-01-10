@@ -1,13 +1,14 @@
-import "tailwindcss/tailwind.css";
-import "gestalt/dist/gestalt.css";
+import 'gestalt/dist/gestalt.css';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import 'tailwindcss/tailwind.css';
+import Routes from './routes';
 
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./routes";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <BrowserRouter>
+      <Routes />
+    </BrowserRouter>
   </React.StrictMode>
 );

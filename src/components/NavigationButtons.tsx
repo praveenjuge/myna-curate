@@ -1,7 +1,8 @@
-import { ChevronLeft, ChevronRight } from "@mynaui/icons-react";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from '@mynaui/icons-react';
+import { PanelLeftClose } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const NavigationButtons: React.FC = () => {
   const navigate = useNavigate();
@@ -23,11 +24,25 @@ const NavigationButtons: React.FC = () => {
 
   return (
     <>
-      <Button size="icon" variant="link" onClick={goBack} disabled={!canGoBack}>
+      <Button
+        className="text-slate-500"
+        size="icon"
+        variant="link"
+        onClick={goBack}
+        disabled={!canGoBack}
+      >
         <ChevronLeft className="h-5 w-5" />
       </Button>
-      <Button size="icon" variant="link" onClick={goForward}>
+      <Button
+        className="text-slate-500"
+        size="icon"
+        variant="link"
+        onClick={goForward}
+      >
         <ChevronRight className="h-5 w-5" />
+      </Button>
+      <Button className="text-slate-500" size="icon" variant="link">
+        <PanelLeftClose className="h-5 w-5" strokeWidth={1.3} />
       </Button>
     </>
   );

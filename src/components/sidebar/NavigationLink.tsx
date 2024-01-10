@@ -1,14 +1,14 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 const linkClass =
-  "flex items-center gap-1.5 py-1.5 hover:text-orange-600 group truncate";
+  'flex items-center gap-1.5 py-1.5 hover:text-orange-600 group truncate';
 const linkActiveClass = cn(
   linkClass,
-  "text-orange-600 font-medium [&_svg]:text-orange-600"
+  'text-orange-600 font-medium [&_svg]:text-orange-600'
 );
-const linkInActiveClass = cn(linkClass, "text-slate-600");
+const linkInActiveClass = cn(linkClass, 'text-slate-600');
 
 interface NavigationLinkProps {
   icon: JSX.Element;
@@ -19,10 +19,10 @@ interface NavigationLinkProps {
 export const NavigationLink: React.FC<NavigationLinkProps> = ({
   icon,
   to,
-  label,
+  label
 }) => {
   const iconClass =
-    "h-5 w-5 text-slate-400 group-hover:text-orange-600 shrink-0";
+    'h-5 w-5 text-slate-400 group-hover:text-orange-600 shrink-0';
   return (
     <NavLink
       className={({ isActive }) =>
@@ -31,7 +31,7 @@ export const NavigationLink: React.FC<NavigationLinkProps> = ({
       to={to}
     >
       {React.cloneElement(icon, { className: iconClass })}
-      <span>{label}</span>
+      <span className="truncate">{label}</span>
     </NavLink>
   );
 };

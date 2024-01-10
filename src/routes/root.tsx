@@ -1,11 +1,11 @@
-import { Outlet } from "react-router-dom";
-import Sidebar from "@/components/Sidebar";
-import { Toaster } from "@/components/ui/sonner";
+import Sidebar from '@/components/Sidebar';
 import {
   ResizableHandle,
   ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+  ResizablePanelGroup
+} from '@/components/ui/resizable';
+import { Toaster } from '@/components/ui/sonner';
+import { Outlet } from 'react-router-dom';
 
 const App = () => {
   return (
@@ -18,11 +18,11 @@ const App = () => {
       >
         <ResizablePanel
           defaultSize={20}
-          minSize={15}
+          minSize={10}
           maxSize={30}
           order={1}
           tagName="aside"
-          className="min-w-32 select-none bg-slate-100 min-h-screen max-h-screen flex flex-col gap-4 border-r-[0.5px] border-slate-300"
+          className="flex max-h-screen min-h-screen select-none flex-col gap-4 border-r-[0.5px] border-slate-300 bg-slate-50"
         >
           <Sidebar />
         </ResizablePanel>

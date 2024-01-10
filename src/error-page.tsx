@@ -1,4 +1,4 @@
-import { useRouteError } from "react-router-dom";
+import { useRouteError } from 'react-router-dom';
 
 interface ErrorObject {
   statusText?: string;
@@ -12,7 +12,7 @@ export default function ErrorPage() {
   return (
     <section
       id="error-page"
-      className="flex p-6 flex-col justify-center items-center h-screen gap-4 max-w-sm mx-auto text-center"
+      className="mx-auto flex h-screen max-w-sm flex-col items-center justify-center gap-4 p-6 text-center"
     >
       <p className="text-lg font-bold">{error.statusText || error.message}</p>
       <h1 className="text-slate-600">

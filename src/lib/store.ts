@@ -1,22 +1,22 @@
-import { writeTextFile, BaseDirectory, readTextFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
 
-export async function saveStore(name: string, value: any) {
+export async function saveStore(name: string, value: string | string[]) {
   // Create a JSON object with the name and value
   const json = { [name]: value };
 
   // Serialize the JSON object into a string
   const jsonString = JSON.stringify(json);
 
-  await writeTextFile("settings.json", jsonString, {
-    dir: BaseDirectory.AppConfig,
+  await writeTextFile('settings.json', jsonString, {
+    dir: BaseDirectory.AppConfig
   });
 }
 
 export async function getStore(name: string) {
   try {
     // Read the JSON string from the file
-    const jsonString = await readTextFile("settings.json", {
-      dir: BaseDirectory.AppConfig,
+    const jsonString = await readTextFile('settings.json', {
+      dir: BaseDirectory.AppConfig
     });
 
     // Parse the JSON string into an object
@@ -28,7 +28,7 @@ export async function getStore(name: string) {
     return store[name];
   } catch (error) {
     // Handle any errors (e.g., file not found, parse errors)
-    console.error("Error retrieving the store:", error);
+    console.error('Error retrieving the store:', error);
     return undefined;
   }
 }

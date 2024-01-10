@@ -1,13 +1,17 @@
-import Header from "@/components/Header";
+import Header from '@/components/Header';
+import ListImages from '@/components/ListImages';
+import { useParams } from 'react-router-dom';
 
 export default function Folder() {
+  // Extracting 'folderName' from the URL parameters
+  const { folderName } = useParams();
+
   return (
     <>
-      <Header title="FolderName" />
+      <Header title={folderName ? decodeURIComponent(folderName) : 'Folder'} />
 
-      <div className="p-4">
-        <h1>Folder Name</h1>
-      </div>
+      {/* Ensure folderName is not undefined before rendering ListImages */}
+      {folderName && <ListImages for={`${folderName}`} />}
     </>
   );
 }

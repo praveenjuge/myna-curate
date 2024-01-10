@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import { FileEntry } from "@tauri-apps/api/fs";
+import { FileEntry } from '@tauri-apps/api/fs';
+import { NavLink } from 'react-router-dom';
 
 interface FolderListProps {
   directories: FileEntry[];
@@ -12,7 +12,7 @@ export const FolderList: React.FC<FolderListProps> = ({
   directories,
   linkActiveClass,
   linkInActiveClass,
-  emojiContainerClass,
+  emojiContainerClass
 }) => {
   return (
     <>
@@ -22,12 +22,12 @@ export const FolderList: React.FC<FolderListProps> = ({
           className={({ isActive }) =>
             isActive ? linkActiveClass : linkInActiveClass
           }
-          to={`/folder/${encodeURIComponent(directory.name || "Default Name")}`}
+          to={`/folder/${encodeURIComponent(directory.name || 'Default Name')}`}
         >
           <div className={emojiContainerClass}>
             <span>📁</span>
           </div>
-          <span>{directory.name}</span>
+          <span className="w-full truncate">{directory.name}</span>
         </NavLink>
       ))}
     </>

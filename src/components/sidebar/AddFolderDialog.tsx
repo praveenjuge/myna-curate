@@ -1,17 +1,17 @@
-import React from "react";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Plus } from "@mynaui/icons-react";
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Plus } from '@mynaui/icons-react';
+import React from 'react';
 
 interface AddFolderDialogProps {
   open: boolean;
@@ -20,6 +20,7 @@ interface AddFolderDialogProps {
   folderName: string;
   setFolderName: (name: string) => void;
   emojiContainerClass: string;
+  linkInActiveClass: string;
 }
 
 export const AddFolderDialog: React.FC<AddFolderDialogProps> = ({
@@ -29,13 +30,14 @@ export const AddFolderDialog: React.FC<AddFolderDialogProps> = ({
   folderName,
   setFolderName,
   emojiContainerClass,
+  linkInActiveClass
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="text-slate-600 flex items-center gap-1.5 py-1.5 group">
+        <button className={linkInActiveClass}>
           <div className={emojiContainerClass}>
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
           </div>
           <span>Add New...</span>
         </button>

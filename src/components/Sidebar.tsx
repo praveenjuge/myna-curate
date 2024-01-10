@@ -1,25 +1,25 @@
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { Cog, Heart, Home, Inbox, Trash } from "@mynaui/icons-react";
-import NavigationButtons from "./NavigationButtons";
-import { cn } from "@/lib/utils";
-import { FileEntry, createDir, readDir } from "@tauri-apps/api/fs";
-import { getStore } from "@/lib/store";
-import { NavigationLink } from "./sidebar/NavigationLink";
-import { AddFolderDialog } from "./sidebar/AddFolderDialog";
-import { FolderList } from "./sidebar/FolderList";
-import { AddNewFiles } from "./AddNewFiles";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { getStore } from '@/lib/store';
+import { cn } from '@/lib/utils';
+import { Cog, Heart, Home, Inbox, Trash } from '@mynaui/icons-react';
+import { FileEntry, createDir, readDir } from '@tauri-apps/api/fs';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AddNewFiles } from './AddNewFiles';
+import NavigationButtons from './NavigationButtons';
+import { AddFolderDialog } from './sidebar/AddFolderDialog';
+import { FolderList } from './sidebar/FolderList';
+import { NavigationLink } from './sidebar/NavigationLink';
 
 const linkClass =
-  "flex items-center gap-1.5 py-1.5 hover:text-orange-600 group truncate";
+  'flex items-center gap-1.5 py-1.5 hover:text-orange-600 group truncate w-full truncate';
 const linkActiveClass = cn(
   linkClass,
-  "text-orange-600 font-medium [&_svg]:text-orange-600"
+  'text-orange-600 font-medium [&_svg]:text-orange-600'
 );
-const linkInActiveClass = cn(linkClass, "text-slate-600");
+const linkInActiveClass = cn(linkClass, 'text-slate-600');
+
 const emojiContainerClass =
-  "bg-white h-5 w-5 flex justify-center items-center rounded ring-[0.5px] ring-slate-300 text-[9px] shrink-0";
+  'bg-white h-5 w-5 flex justify-center items-center rounded border-[0.5px] border-slate-300 text-[9px] text-slate-400 group-hover:bg-orange-50 group-hover:border-orange-200 group-hover:text-orange-600';
 
 interface SidebarState {
   open: boolean;
@@ -30,18 +30,18 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const [state, setState] = useState<SidebarState>({
     open: false,
-    folderName: "",
+    folderName: ''
   });
   const [directories, setDirectories] = useState<FileEntry[]>([]);
 
   const fetchDirectories = useCallback(async () => {
     try {
-      const libraryLocation = await getStore("libraryLocation");
+      const libraryLocation = await getStore('libraryLocation');
       const dirEntries = await readDir(libraryLocation);
       const dirs = dirEntries.filter((entry) => entry.children !== undefined);
       setDirectories(dirs);
     } catch (error) {
-      console.error("Error reading directories:", error);
+      console.error('Error reading directories:', error);
     }
   }, []);
 
@@ -56,14 +56,14 @@ export default function Sidebar() {
       if (!folderName) return;
 
       try {
-        const libraryLocation = await getStore("libraryLocation");
+        const libraryLocation = await getStore('libraryLocation');
         const newFolderPath = `${libraryLocation}/${folderName}`;
         await createDir(newFolderPath, { recursive: true });
-        setState({ open: false, folderName: "" });
+        setState({ open: false, folderName: '' });
         await fetchDirectories();
         navigate(`/folder/${encodeURIComponent(folderName)}`);
       } catch (error) {
-        console.error("Error creating directory:", error);
+        console.error('Error creating directory:', error);
       }
     },
     [state, fetchDirectories, navigate]
@@ -81,15 +81,15 @@ export default function Sidebar() {
     <>
       <div
         data-tauri-drag-region
-        className="h-10 shrink-0 border-b-[0.5px] border-slate-300 flex items-center justify-end px-2"
+        className="flex h-10 shrink-0 items-center justify-end border-b-[0.5px] border-slate-300 px-2"
       >
         <NavigationButtons />
       </div>
-      <div className="px-4 w-full">
+      <div className="w-full px-4">
         <AddNewFiles />
       </div>
-      <ScrollArea>
-        <nav className="flex flex-col px-4 overflow-y-auto shrink-0">
+      <div className="h-full overflow-auto">
+        <nav className="flex w-full shrink-0 flex-col px-4">
           <NavigationLink icon={<Home />} to="/" label="Everything" />
           <NavigationLink
             icon={<Inbox />}
@@ -100,7 +100,7 @@ export default function Sidebar() {
           <NavigationLink icon={<Trash />} to="/trash" label="Trash" />
           <NavigationLink icon={<Cog />} to="/settings" label="Settings" />
 
-          <p className="uppercase text-[11px] font-semibold tracking-wide text-slate-500 pt-4 pb-1">
+          <p className="pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             Folders
           </p>
 
@@ -111,6 +111,7 @@ export default function Sidebar() {
             folderName={state.folderName}
             setFolderName={handleFolderNameChange}
             emojiContainerClass={emojiContainerClass}
+            linkInActiveClass={linkInActiveClass}
           />
           <FolderList
             directories={directories}
@@ -119,7 +120,7 @@ export default function Sidebar() {
             emojiContainerClass={emojiContainerClass}
           />
         </nav>
-      </ScrollArea>
+      </div>
     </>
   );
 }

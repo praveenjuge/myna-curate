@@ -1,26 +1,26 @@
-import React, { useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { writeBinaryFile, exists, createDir } from "@tauri-apps/api/fs";
-import { getStore } from "@/lib/store";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Plus } from "@mynaui/icons-react";
+import { Button } from '@/components/ui/button';
+import { getStore } from '@/lib/store';
+import { Plus } from '@mynaui/icons-react';
+import { createDir, exists, writeBinaryFile } from '@tauri-apps/api/fs';
+import React, { useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const AddNewFiles: React.FC = () => {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Check if the current location is a specific folder
-  const isSpecificFolder = location.pathname.startsWith("/folder/");
+  const isSpecificFolder = location.pathname.startsWith('/folder/');
 
   const uploadFiles = async (files: File[]) => {
-    const libraryLocation = await getStore("libraryLocation");
-    let targetFolder = isSpecificFolder
-      ? location.pathname.replace("/folder/", "")
-      : "Unorganized";
+    const libraryLocation = await getStore('libraryLocation');
+    const targetFolder = isSpecificFolder
+      ? location.pathname.replace('/folder/', '')
+      : 'Unorganized';
 
     // Check if the "Unorganized" folder exists, if not create it
-    if (targetFolder === "Unorganized") {
+    if (targetFolder === 'Unorganized') {
       const unorganizedPath = `${libraryLocation}/${targetFolder}`;
       if (!(await exists(unorganizedPath))) {
         await createDir(unorganizedPath, { recursive: true });
@@ -45,21 +45,21 @@ export const AddNewFiles: React.FC = () => {
     const files = event.target.files;
     if (files) {
       const imageFiles = Array.from(files).filter((file) =>
-        file.type.startsWith("image/")
+        file.type.startsWith('image/')
       );
 
       if (imageFiles.length > 0) {
         try {
           toast.promise(uploadFiles(imageFiles), {
-            loading: "Uploading...",
-            success: "Files uploaded successfully",
-            error: "Error uploading files",
+            loading: 'Uploading...',
+            success: 'Files uploaded successfully',
+            error: 'Error uploading files'
           });
         } catch (error) {
-          console.error("Error during file upload:", error);
+          console.error('Error during file upload:', error);
         }
       } else {
-        toast.error("No image files selected");
+        toast.error('No image files selected');
       }
     }
   };
@@ -75,12 +75,12 @@ export const AddNewFiles: React.FC = () => {
         accept="image/*"
         multiple
         onChange={handleFileSelection}
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         ref={fileInputRef}
       />
       <Button
         variant="primary"
-        className="w-full gap-1 text-left shrink-0"
+        className="w-full shrink-0 gap-1 text-left"
         onClick={handleButtonClick}
       >
         <Plus className="h-5 w-5 shrink-0" />
