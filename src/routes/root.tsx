@@ -22,12 +22,16 @@ const App = () => {
           maxSize={30}
           order={1}
           tagName="aside"
-          className="flex max-h-screen min-h-screen select-none flex-col gap-4 border-r-[0.5px] border-slate-300 bg-slate-50"
+          className="flex max-h-screen min-h-screen select-none flex-col gap-4 bg-white/90"
         >
           <Sidebar />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel tagName="main" className="flex flex-col" order={2}>
+        <ResizablePanel
+          tagName="main"
+          className="flex flex-col bg-white"
+          order={2}
+        >
           <Outlet />
         </ResizablePanel>
       </ResizablePanelGroup>

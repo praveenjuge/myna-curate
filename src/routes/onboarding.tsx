@@ -21,7 +21,7 @@ const Onboarding = () => {
   return (
     <div
       data-tauri-drag-region
-      className="flex h-screen w-screen flex-col items-center justify-center gap-5"
+      className="flex h-screen w-screen flex-col items-center justify-center gap-5 bg-white/75"
     >
       <div className="flex flex-col gap-1.5 text-center">
         <h1 className="text-2xl font-bold tracking-tight">Myna Curate</h1>
